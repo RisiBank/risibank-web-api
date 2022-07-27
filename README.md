@@ -7,9 +7,9 @@ Integrate RisiBank in any front-end application 😎
 
 The RisiBank Web API is a tiny JS library, it has no dependency and weights around 3kb minified and gzipped.
 
-It allows you to integrate RisiBank in your website in the way that you prefer (overlay, modal, embedded in the page somwehere) with custom styling, and let user select medias from RisiBank.
+It allows you to integrate RisiBank in your website in the way that you prefer (overlay, modal, embedded in the page somewhere) with custom styling, and let user select medias from RisiBank.
 
-The RisiBank Web API is the base building block for any application that want to use RisiBank somewhere in the web.
+The RisiBank Web API is the base building block for any application that needs to use RisiBank anywhere on the web.
 
 ## Getting started
 
