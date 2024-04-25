@@ -1,26 +1,25 @@
 {
-    "name": "risibank-web-api",
-    "version": "0.0.2",
-    "description": "Integrate RisiBank in any front-end application 😎",
-    "main": "src/index.js",
-    "scripts": {
-        "build": "rm -rf dist && ./node_modules/.bin/webpack"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/RisiBank/risibank-web-api.git"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/RisiBank/risibank-web-api/issues"
-    },
-    "homepage": "https://github.com/RisiBank/risibank-web-api#readme",
-    "devDependencies": {
-        "webpack": "^5.64.4",
-        "webpack-cli": "^4.9.1"
-    },
-    "dependencies": {
-    }
+  "name": "risibank-web-api",
+  "version": "0.1.0",
+  "description": "Integrate RisiBank in any front-end application 😎",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "rm -rf dist && ./node_modules/.bin/webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RisiBank/risibank-web-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RisiBank/risibank-web-api/issues"
+  },
+  "homepage": "https://github.com/RisiBank/risibank-web-api#readme",
+  "devDependencies": {
+    "webpack": "^5.64.4",
+    "webpack-cli": "^4.9.1"
+  },
+  "dependencies": {}
 }

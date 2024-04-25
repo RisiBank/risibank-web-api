@@ -1,6 +1,7 @@
 import { Defaults } from "./Defaults";
 import { UI } from "./UI";
 import { Actions } from "./Actions";
+import { Constants } from "./Constants";
 
 
 /**
@@ -35,11 +36,9 @@ export class RisiBank {
     static Defaults = Defaults;
     static UI = UI;
     static Actions = Actions;
+    static Constants = Constants;
 
     constructor() {
-
-        this._location = 'https://risibank.fr';
-        //this._location = 'http://localhost';
 
         // Tracks integrations to their callbacks
         this._integrations = { };
@@ -71,6 +70,7 @@ export class RisiBank {
         this.Defaults = Defaults;
         this.UI = UI;
         this.Actions = Actions;
+        this.Constants = Constants;
         // Retro-compatibility
         this.addImageToTextArea = Actions.addImageLink;
         this.addSourceImageToTextArea = Actions.addSourceImageLink;
@@ -209,7 +209,7 @@ export class RisiBank {
      * @returns {String}
      */
     _getEmbedUrl(options, integrationId) {
-        let url = `${this._location}/embed?id=${integrationId}`;
+        let url = `${this.Constants.RISIBANK_URL}/embed?id=${integrationId}`;
         url += `&theme=${options.theme}`;
         url += `&allowUsernameSelection=${options.allowUsernameSelection}`;
         url += `&showCopyButton=${options.showCopyButton}`;
