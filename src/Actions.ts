@@ -1,24 +1,23 @@
-
+import { ActionCallback } from './types.js';
 
 /**
  * Callbacks for the API actions.
  */
 export class Actions {
-    
     /**
      * Generate a callback for a given integration
-     * @param {String|HTMLElement} selectorOrElement 
-     * @param {'source'|'risibank'} linkType Link to add to the text area
-     * @returns {Function}
      */
-    static addImageLink(selectorOrElement, linkType) {
-        return ({ id, data, media }) => {
-
-            let formElement;
+    static addImageLink(selectorOrElement: string | HTMLFormElement, linkType: 'source' | 'risibank'): ActionCallback {
+        return ({ media }) => {
+            let formElement: HTMLFormElement | null;
             if (typeof selectorOrElement === 'string') {
                 formElement = document.querySelector(selectorOrElement);
             } else {
                 formElement = selectorOrElement;
+            }
+
+            if (!formElement) {
+                throw new Error('Element not found');
             }
             const link = linkType === 'source' ? media.source_url : media.cache_url;
 
@@ -26,14 +25,17 @@ export class Actions {
             const cursorIndex = formElement.selectionStart;
 
             // Decide whether to append and prepend spaces
-            const preprendSpace = formElement.value[cursorIndex - 1] && ! formElement.value[cursorIndex - 1].match(/\s/);
-            const appendSpace = typeof formElement.value[cursorIndex] === 'undefined' || ! formElement.value[cursorIndex].match(/\s/);
+            const preprendSpace = formElement.value[cursorIndex - 1] && !formElement.value[cursorIndex - 1].match(/\s/);
+            const appendSpace = typeof formElement.value[cursorIndex] === 'undefined' || !formElement.value[cursorIndex].match(/\s/);
 
             // Build text to add
             const added = `${preprendSpace ? ' ' : ''}${link}${appendSpace ? ' ' : ''}`;
 
             // Insert link where cursor is
-            formElement.value = formElement.value.substring(0, formElement.selectionStart) + added + formElement.value.substring(formElement.selectionStart);
+            formElement.value =
+                formElement.value.substring(0, formElement.selectionStart) +
+                added +
+                formElement.value.substring(formElement.selectionStart);
 
             // Emit change event
             formElement.dispatchEvent(new Event('change'));
@@ -41,36 +43,35 @@ export class Actions {
 
             // Re-focus the text area
             formElement.focus();
-        }
+        };
     }
 
     /**
      * Generate a callback to add a source image link (e.g. NoelShack) to a given text area
-     * @param {String|HTMLElement} selectorOrElement 
      */
-    static addSourceImageLink(selectorOrElement) {
+    static addSourceImageLink(selectorOrElement: string | HTMLFormElement): ActionCallback {
         return Actions.addImageLink(selectorOrElement, 'source');
     }
 
     /**
      * Generate a callback to add a risibank image link to a given text area
-     * @param {String|HTMLElement} selectorOrElement 
      */
-    static addRisiBankImageLink(selectorOrElement) {
+    static addRisiBankImageLink(selectorOrElement: string | HTMLFormElement): ActionCallback {
         return Actions.addImageLink(selectorOrElement, 'risibank');
     }
 
     /**
      * Paste the raw image data to the document
      */
-    static pasteImage() {
-        return async ({ id, data, media }) => {
-
+    static pasteImage(): ActionCallback {
+        return async ({ media }) => {
             const response = await fetch(media.cache_url);
             const blob = await response.blob();
-            await navigator.clipboard.write([new ClipboardItem({
-                [blob.type]: blob,
-            })]);
+            await navigator.clipboard.write([
+                new ClipboardItem({
+                    [blob.type]: blob,
+                }),
+            ]);
             document.execCommand('paste');
         };
     }
