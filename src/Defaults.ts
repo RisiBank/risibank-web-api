@@ -1,11 +1,10 @@
-import { UI } from "./UI";
-
+import { ActivateOptions } from './RisiBank';
+import { UI } from './UI';
 
 /**
  * Global defaults
  */
-const globalDefault = {
-
+const globalDefault: Partial<ActivateOptions> = {
     // Global recommended defaults
     defaultTab: 'top',
     showNSFW: false,
@@ -21,30 +20,27 @@ const globalDefault = {
  * Each theme with its own defaults
  */
 const themeDefaults = {
-    Light: { theme: 'light', },
-    Dark: { theme: 'dark', },
-    LightClassic: { theme: 'light-old', },
-    DarkClassic: { theme: 'dark-old', },
-}
+    Light: { theme: 'light' },
+    Dark: { theme: 'dark' },
+    LightClassic: { theme: 'light-old' },
+    DarkClassic: { theme: 'dark-old' },
+};
 
 /**
  * Build a default config for each theme
  */
-const buildConfig = (config) => {
-    return Object
-        .entries(themeDefaults)
-        .reduce((acc, [key, value]) => {
-            acc[key] = { ...globalDefault, ...value, ...config };
-            return acc;
-        }, {});
+const buildConfig = (config: Partial<ActivateOptions>) => {
+    return Object.entries(themeDefaults).reduce((acc, [key, value]) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (acc as any)[key] = { ...globalDefault, ...value, ...config };
+        return acc;
+    }, {});
 };
-
 
 /**
  * Set of default recommended options for the web-api.
  */
 export class Defaults {
-
     static get Frame() {
         return buildConfig({
             container: undefined,
