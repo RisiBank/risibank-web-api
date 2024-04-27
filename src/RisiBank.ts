@@ -130,7 +130,9 @@ export class RisiBank {
         }
 
         // Listen for resulting events
-        addEventListener('message', RisiBank.onIFrameMessage.bind(this), false);
+        if (typeof window !== 'undefined') {
+            window.addEventListener('message', RisiBank.onIFrameMessage.bind(this), false);
+        }
     }
 
     /**

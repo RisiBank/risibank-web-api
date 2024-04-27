@@ -26,7 +26,7 @@ The RisiBank Web API is the base building block for any application that needs t
     <script src="./path/to/your/risibank.js"></script>
     ```
 
-2. Import RisiBank (ESM only)
+2. Import RisiBank
 
     ```javascript
     import { RisiBank } from 'risibank-web-api';
