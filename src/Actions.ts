@@ -1,17 +1,40 @@
 import { ActionCallback } from './types.js';
 
+type InputType = HTMLInputElement | HTMLTextAreaElement;
+
 /**
  * Callbacks for the API actions.
  */
 export class Actions {
     /**
+     * Set the value of an input or textarea element.
+     * This method maximizes compatibility with different browsers and frameworks
+     */
+    static setInputValue(element: InputType, value: string) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const valueSetter = Object.getOwnPropertyDescriptor((element as any).__proto__, 'value')?.set;
+        const prototype = Object.getPrototypeOf(element);
+        const prototypeValueSetter = Object.getOwnPropertyDescriptor(prototype, 'value')?.set;
+    
+        if (prototypeValueSetter && valueSetter !== prototypeValueSetter) {
+            prototypeValueSetter.call(element, value);
+        } else if (valueSetter) {
+            valueSetter.call(element, value);
+        } else {
+            element.value = value;
+        }
+    
+        element.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    /**
      * Generate a callback for a given integration
      */
-    static addImageLink(selectorOrElement: string | HTMLFormElement, linkType: 'source' | 'risibank'): ActionCallback {
+    static addImageLink(selectorOrElement: string | InputType, linkType: 'source' | 'risibank'): ActionCallback {
         return ({ media }) => {
-            let formElement: HTMLFormElement | null;
+            let formElement: InputType | null;
             if (typeof selectorOrElement === 'string') {
-                formElement = document.querySelector(selectorOrElement);
+                formElement = document.querySelector<InputType>(selectorOrElement);
             } else {
                 formElement = selectorOrElement;
             }
@@ -25,17 +48,18 @@ export class Actions {
             const cursorIndex = formElement.selectionStart;
 
             // Decide whether to append and prepend spaces
-            const preprendSpace = formElement.value[cursorIndex - 1] && !formElement.value[cursorIndex - 1].match(/\s/);
-            const appendSpace = typeof formElement.value[cursorIndex] === 'undefined' || !formElement.value[cursorIndex].match(/\s/);
+            const preprendSpace = cursorIndex !== null && formElement.value[cursorIndex - 1] && !formElement.value[cursorIndex - 1].match(/\s/);
+            const appendSpace = cursorIndex !== null && (typeof formElement.value[cursorIndex] === 'undefined' || !formElement.value[cursorIndex].match(/\s/));
 
             // Build text to add
             const added = `${preprendSpace ? ' ' : ''}${link}${appendSpace ? ' ' : ''}`;
 
-            // Insert link where cursor is
-            formElement.value =
-                formElement.value.substring(0, formElement.selectionStart) +
+            Actions.setInputValue(
+                formElement,
+                formElement.value.substring(0, cursorIndex ?? 0) +
                 added +
-                formElement.value.substring(formElement.selectionStart);
+                formElement.value.substring(cursorIndex ?? 0)
+            );
 
             // Emit change event
             formElement.dispatchEvent(new Event('change'));
@@ -49,14 +73,14 @@ export class Actions {
     /**
      * Generate a callback to add a source image link (e.g. NoelShack) to a given text area
      */
-    static addSourceImageLink(selectorOrElement: string | HTMLFormElement): ActionCallback {
+    static addSourceImageLink(selectorOrElement: string | InputType): ActionCallback {
         return Actions.addImageLink(selectorOrElement, 'source');
     }
 
     /**
      * Generate a callback to add a risibank image link to a given text area
      */
-    static addRisiBankImageLink(selectorOrElement: string | HTMLFormElement): ActionCallback {
+    static addRisiBankImageLink(selectorOrElement: string | InputType): ActionCallback {
         return Actions.addImageLink(selectorOrElement, 'risibank');
     }
 
