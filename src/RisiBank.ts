@@ -187,7 +187,7 @@ export class RisiBank {
         }
 
         // Show NSFW
-        options.showNSFW = typeof options.showNSFW === 'boolean' ? options.showNSFW : true;
+        options.showNSFW = typeof options.showNSFW === 'boolean' ? options.showNSFW : false;
 
         // Username selection
         options.allowUsernameSelection = typeof options.allowUsernameSelection === 'boolean' ? options.allowUsernameSelection : true;
