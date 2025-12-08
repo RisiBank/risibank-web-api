@@ -85,18 +85,32 @@ export class Actions {
     }
 
     /**
-     * Paste the raw image data to the document
+     * Paste the raw image data to the document by simulating a paste event.
+     * This approach bypasses clipboard API limitations and works with GIFs.
      */
     static pasteImage(): ActionCallback {
         return async ({ media }) => {
             const response = await fetch(media.cache_url);
             const blob = await response.blob();
-            await navigator.clipboard.write([
-                new ClipboardItem({
-                    [blob.type]: blob,
-                }),
-            ]);
-            document.execCommand('paste');
+
+            // Create a File from the blob
+            const fileName = media.cache_url.split('/').pop() || 'image';
+            const file = new File([blob], fileName, { type: blob.type });
+
+            // Create DataTransfer with the file
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+
+            // Create and dispatch synthetic paste event
+            const pasteEvent = new ClipboardEvent('paste', {
+                bubbles: true,
+                cancelable: true,
+                clipboardData: dataTransfer,
+            });
+
+            // Dispatch on the active element (the focused input/editor)
+            const target = document.activeElement || document;
+            target.dispatchEvent(pasteEvent);
         };
     }
 }
