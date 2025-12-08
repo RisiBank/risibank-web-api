@@ -7,6 +7,25 @@ type InputType = HTMLInputElement | HTMLTextAreaElement;
  */
 export class Actions {
     /**
+     * Resolve a selector or element to an element, with optional fallback.
+     */
+    private static resolveElement<T extends Element>(
+        selectorOrElement?: string | T,
+        fallback?: Element | Document | null
+    ): T | Element | Document {
+        let target: T | Element | Document | null;
+        if (typeof selectorOrElement === 'string') {
+            target = document.querySelector<T>(selectorOrElement);
+        } else {
+            target = selectorOrElement || fallback || null;
+        }
+        if (!target) {
+            throw new Error('Element not found');
+        }
+        return target;
+    }
+
+    /**
      * Set the value of an input or textarea element.
      * This method maximizes compatibility with different browsers and frameworks
      */
@@ -32,16 +51,7 @@ export class Actions {
      */
     static addImageLink(selectorOrElement: string | InputType, linkType: 'source' | 'risibank'): ActionCallback {
         return ({ media }) => {
-            let formElement: InputType | null;
-            if (typeof selectorOrElement === 'string') {
-                formElement = document.querySelector<InputType>(selectorOrElement);
-            } else {
-                formElement = selectorOrElement;
-            }
-
-            if (!formElement) {
-                throw new Error('Element not found');
-            }
+            const formElement = Actions.resolveElement<InputType>(selectorOrElement) as InputType;
             const link = linkType === 'source' ? media.source_url : media.cache_url;
 
             // Get cursor position
@@ -87,29 +97,24 @@ export class Actions {
     /**
      * Paste the raw image data to the document by simulating a paste event.
      * This approach bypasses clipboard API limitations and works with GIFs.
+     * @param selectorOrElement - Optional selector or element to dispatch the paste event to.
+     *                            If provided, captures the target at activation time (before modal opens).
+     *                            If not provided, falls back to document.activeElement at execution time.
      */
-    static pasteImage(): ActionCallback {
+    static pasteImage(selectorOrElement?: string | Element): ActionCallback {
         return async ({ media }) => {
             const response = await fetch(media.cache_url);
             const blob = await response.blob();
-
-            // Create a File from the blob
             const fileName = media.cache_url.split('/').pop() || 'image';
             const file = new File([blob], fileName, { type: blob.type });
-
-            // Create DataTransfer with the file
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(file);
-
-            // Create and dispatch synthetic paste event
             const pasteEvent = new ClipboardEvent('paste', {
                 bubbles: true,
                 cancelable: true,
                 clipboardData: dataTransfer,
             });
-
-            // Dispatch on the active element (the focused input/editor)
-            const target = document.activeElement || document;
+            const target = Actions.resolveElement(selectorOrElement, document.activeElement || document);
             target.dispatchEvent(pasteEvent);
         };
     }
