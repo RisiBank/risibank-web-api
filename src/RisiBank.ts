@@ -121,7 +121,7 @@ export class RisiBank {
 
     static init() {
         // Try to load selected username from local storage if possible
-        if (typeof localStorage !== 'undefined') {
+        if (localStorage?.getItem !== undefined) {
             const saved = localStorage.getItem('risibank-userscript-selected-username');
             // Check saved data is valid to avoid pollution through localStorage
             if (typeof saved === 'string' && saved.match(/^[a-zA-Z0-9\][_-]+$/i)) {
@@ -130,7 +130,7 @@ export class RisiBank {
         }
 
         // Listen for resulting events
-        if (typeof window !== 'undefined') {
+        if (window?.addEventListener !== undefined) {
             window.addEventListener('message', RisiBank.onIFrameMessage.bind(this), false);
         }
     }
