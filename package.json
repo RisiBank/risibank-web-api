@@ -1,6 +1,6 @@
 {
     "name": "risibank-web-api",
-    "version": "1.3.2",
+    "version": "1.3.3",
     "description": "Integrate RisiBank in any front-end application 😎",
     "type": "module",
     "main": "./build/index.js",
