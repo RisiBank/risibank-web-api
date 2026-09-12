@@ -11,6 +11,7 @@ const globalDefault: Partial<ActivateOptions> = {
     allowUsernameSelection: true,
     showCopyButton: false,
     onCopyMedia: undefined,
+    hideSearchOnOtherTabs: false,
 
     // To be set by user
     onSelectMedia: undefined,

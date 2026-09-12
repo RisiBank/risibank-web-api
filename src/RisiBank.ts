@@ -83,6 +83,11 @@ export interface ActivateOptions {
      * Callback when the copy button is shown (only used if showCopyButton is set to true)
      */
     onCopyMedia?: ActionCallback;
+
+    /**
+     * Whether to hide the search bar on every tab except the search tab. Default is false.
+     */
+    hideSearchOnOtherTabs?: boolean;
 }
 
 export class RisiBank {
@@ -195,6 +200,9 @@ export class RisiBank {
         // Show copy button
         options.showCopyButton = typeof options.showCopyButton === 'boolean' ? options.showCopyButton : false;
 
+        // Hide search bar outside of the search tab
+        options.hideSearchOnOtherTabs = typeof options.hideSearchOnOtherTabs === 'boolean' ? options.hideSearchOnOtherTabs : false;
+
         // Verify that the callback is valid
         const onSelectMedia = options.onSelectMedia;
         if (typeof onSelectMedia !== 'function') {
@@ -280,6 +288,7 @@ export class RisiBank {
         url += `&navbarSize=${options.navbarSize}`;
         url += `&defaultTab=${options.defaultTab}`;
         url += `&showNSFW=${options.showNSFW}`;
+        url += `&hideSearchOnOtherTabs=${options.hideSearchOnOtherTabs}`;
         if (['overlay', 'modal'].includes(options.type)) {
             url += '&showCloseButton=true';
         }
@@ -300,6 +309,7 @@ export class RisiBank {
             options.navbarSize,
             options.defaultTab,
             options.type,
+            options.hideSearchOnOtherTabs,
         ]);
     }
 
