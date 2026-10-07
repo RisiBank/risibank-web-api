@@ -52,7 +52,8 @@ export class Actions {
     static addImageLink(selectorOrElement: string | InputType, linkType: 'source' | 'risibank'): ActionCallback {
         return ({ media }) => {
             const formElement = Actions.resolveElement<InputType>(selectorOrElement) as InputType;
-            const link = linkType === 'source' ? media.source_url : media.cache_url;
+            // A media uploaded straight to RisiBank has no source link yet: the RisiBank one still shows the image.
+            const link = linkType === 'source' ? (media.source_url ?? media.cache_url) : media.cache_url;
 
             // Get cursor position
             const cursorIndex = formElement.selectionStart;
@@ -81,7 +82,8 @@ export class Actions {
     }
 
     /**
-     * Generate a callback to add a source image link (e.g. NoelShack) to a given text area
+     * Generate a callback to add a source image link (e.g. NoelShack) to a given text area,
+     * or the RisiBank image link when the media has no source
      */
     static addSourceImageLink(selectorOrElement: string | InputType): ActionCallback {
         return Actions.addImageLink(selectorOrElement, 'source');
