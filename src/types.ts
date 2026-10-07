@@ -9,8 +9,9 @@ export type ActionCallbackType =
 export type RisiBankMedia = {
     id: number;
     cache_url: string;
-    source_url: string;
-    source_type: string;
+    // Both null for a media uploaded straight to RisiBank, until a client fills its source in.
+    source_url: string | null;
+    source_type: string | null;
     source_exists: boolean;
     slug: string;
     user_id: number;
